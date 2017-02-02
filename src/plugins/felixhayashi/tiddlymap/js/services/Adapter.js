@@ -450,7 +450,7 @@ class Adapter {
       }
 
       const type = allETy[edge.type] || EdgeType.getInstance(edge.type);
-      addStyleToEdge(edges[id], type);
+      this.addStyleToEdge(edges[id], type);
 
       edges[id] = edge;
     }
@@ -950,6 +950,33 @@ class Adapter {
     return result;
 
   }
+
+  /**
+   * Sets up an edge object that is ready to be consumed by vis.
+   *
+   * @param {Edge} edge
+   * @param {EdgeType} type
+   */
+  addStyleToEdge(edge, type) {
+
+    edge = Object.assign(edge, type.style);
+
+    if (utils.isTrue(type['show-label'], true)) {
+      var label = type.getLabel();
+      try {
+        var toTRef = this.getTiddlerById(edge.to);
+        var array = edge.label = utils.getMatches(label, [toTRef]);
+        if (array) {
+          edge.label = array.join();
+        }
+      } catch(err) {
+        console.error(err);
+        edge.label = err.toString();
+      }
+    }
+
+  }
+
 }
 
 /**** Helper *******************************************************/
@@ -1050,22 +1077,6 @@ const removeObsoleteViewData = (nodes, view) => {
       'Removed obsolete node data:',
       view.getLabel(), obsoleteDataItems);
     view.saveNodeData(data);
-  }
-
-};
-
-/**
- * Sets up an edge object that is ready to be consumed by vis.
- *
- * @param {Edge} edge
- * @param {EdgeType} type
- */
-const addStyleToEdge = (edge, type) => {
-
-  edge = Object.assign(edge, type.style);
-
-  if (utils.isTrue(type['show-label'], true)) {
-    edge.label = type.getLabel();
   }
 
 };
