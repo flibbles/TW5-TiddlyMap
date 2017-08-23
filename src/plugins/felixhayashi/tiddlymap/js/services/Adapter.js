@@ -967,6 +967,11 @@ class Adapter {
         var toTRef = this.getTiddlerById(edge.to);
         var array = edge.label = utils.getMatches(label, [toTRef]);
         if (array) {
+	  for (var i in array) {
+            if (array[i].includes("{{")) {
+              array[i] = $tw.wiki.renderText("text/plain", "text/vnd-tiddlywiki", array[i]);
+            }
+          }
           edge.label = array.join();
         }
       } catch(err) {
