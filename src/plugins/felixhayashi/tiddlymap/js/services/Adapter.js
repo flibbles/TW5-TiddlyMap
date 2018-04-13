@@ -962,14 +962,17 @@ class Adapter {
     edge = Object.assign(edge, type.style);
 
     if (utils.isTrue(type['show-label'], true)) {
+
       var label = type.getLabel();
       try {
         var toTRef = this.getTiddlerById(edge.to);
         var array = edge.label = utils.getMatches(label, [toTRef]);
         if (array) {
+          var rules= "\\rules only filteredtranscludeinline transcludeinline\n";
+
 	  for (var i in array) {
             if (array[i].includes("{{")) {
-              array[i] = $tw.wiki.renderText("text/plain", "text/vnd-tiddlywiki", array[i]);
+              array[i] = $tw.wiki.renderText("text/plain", "text/vnd-tiddlywiki", rules + array[i], {parseAsInline: true});
             }
           }
           edge.label = array.join();
